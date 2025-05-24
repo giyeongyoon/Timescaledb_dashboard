@@ -7,6 +7,6 @@ db_info = {
 }
 
 mqtt_info = {
-    'broker_address': '172.30.1.8',
+    'broker_address': '3.35.44.153',
     'topic': 'lora32_vwc'
 }
