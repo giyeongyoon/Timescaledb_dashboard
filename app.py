@@ -7,6 +7,12 @@ from database.postgresql import get_conn_db
 from auth.login import auth
 from auth.user import User
 from common.config import conf
+from common.logging_config import setup_logging
+import logging
+
+setup_logging()
+logger = logging.getLogger(__name__)
+logger.info("앱이 시작되었습니다.")
 
 conn = get_conn_db()
 

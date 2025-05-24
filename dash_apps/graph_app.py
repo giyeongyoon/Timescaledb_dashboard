@@ -74,14 +74,15 @@ def init_graph_dash(server, conn):
     )
     def get_graph(value, n, relayout_data):
         sql = """
-            SELECT time, moisture FROM soil_moisture
+            SELECT time AT TIME ZONE 'Asia/Seoul' AS local_time, moisture \
+            FROM soil_moisture
             WHERE time > now() - interval '10 minutes'
             ORDER BY time ASC;
         """
 
         df = pd.read_sql(sql, conn)
-        fig = go.Figure(data=go.Scatter(x=df['time'],
-                                        y=df['moisture'],
+        fig = go.Figure(data=go.Scatter(x=df['local_time'],
+                                        y=list(df['moisture'].values),
                                         mode='lines'))
         fig.update_layout(
             title = {'text': f'Sensor: {value}',

@@ -61,13 +61,16 @@ def init_latest_dash(server, conn):
         [Input("interval", "n_intervals")]
     )
     def update(n):
-        sql = "SELECT time, moisture FROM soil_moisture ORDER BY time DESC LIMIT 1;"
+        sql = """SELECT time AT TIME ZONE 'Asia/Seoul' AS local_time, moisture 
+        FROM soil_moisture 
+        ORDER BY time DESC 
+        LIMIT 1;"""
         df = pd.read_sql(sql, conn)
 
         if df.empty:
             return "데이터 없음", ""
         value = f"{df['moisture'].iloc[0]:.2f} %"
-        timestamp = df['time'].iloc[0].strftime('%Y-%m-%d %H:%M:%S')
+        timestamp = df['local_time'].iloc[0].strftime('%Y-%m-%d %H:%M:%S')
         return value, timestamp
     
     return dash_app

@@ -1,7 +1,12 @@
+# dashboard/function/notification.py
 import yagmail
 from common.config import conf
+import logging
+
+logger = logging.getLogger(__name__)
 
 def send_email(**kwargs):
+    logger.info("이메일 전송 시작")
     moisture = kwargs.get("moisture")
     sensor_id = kwargs.get("sensor_id")
     status = kwargs.get("status")
@@ -21,5 +26,6 @@ def send_email(**kwargs):
             주의가 필요합니다.
         """
         yag.send(to=email_addr, subject=subject, contents=contents)
+        logger.info("이메일 전송 완료")
     except Exception as e:
-        print(e)
+        logger.error(f"이메일 전송 실패: {e}", exc_info=True)
