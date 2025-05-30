@@ -1,5 +1,5 @@
 # dashboard/dash_apps/latest_graph.py
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, State
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.graph_objects as go
@@ -8,15 +8,20 @@ import plotly.graph_objects as go
 navbar = dbc.Navbar(
     dbc.Container([
         dbc.NavbarBrand("🌱 TimescaleDB Dashboard", href="/", className="ms-2"),
-
-        dbc.Nav(
-            [
-                dbc.NavItem(dbc.NavLink("최신 데이터", href="/latest", external_link=True)),
-                dbc.NavItem(dbc.NavLink("그래프", href="/graph", external_link=True)),
-            ],
-            className="ms-auto",  # 오른쪽 정렬
+        dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
+        dbc.Collapse(
+            dbc.Nav(
+                [
+                    dbc.NavItem(dbc.NavLink("최신 데이터", href="/latest", external_link=True)),
+                    dbc.NavItem(dbc.NavLink("그래프", href="/graph", external_link=True)),
+                ],
+                className="ms-auto",
+                navbar=True,
+            ),
+            id="navbar-collapse",
+            is_open=False,
             navbar=True
-        )
+        ),
     ]),
     color="dark",
     dark=True,
@@ -28,21 +33,16 @@ body = html.Div(
         dbc.Row([
             dbc.Col([
                 html.Label("센서 선택",
-                           style={
-                               "margin-top": "1.5em",
-                               "margin-left": "3em",
-                               "font-weight": "bold",
-                               "font-size": "1rem"
-                           }),
+                           className="fw-bold fs-5 ms-sm-3 ms-0 mt-4"),
                 dcc.Dropdown(
                     options=[
                         {"label": "토양수분", "value": "Teros10"}
                     ],
                     value="Teros10",
                     id="dropdown",
-                    style={"margin-left": "1.5em"}
+                    className="w-100 ms-sm-3 ms-0"
                 )
-            ], width=3)
+            ], xs=12, sm=6, md=3)
         ]),
         dbc.Row([
             dbc.Col([
@@ -112,5 +112,16 @@ def init_graph_dash(server, conn):
                         
 
         return fig
+    
+     # Navbar toggle callback
+    @dash_app.callback(
+        Output("navbar-collapse", "is_open"),
+        Input("navbar-toggler", "n_clicks"),
+        State("navbar-collapse", "is_open")
+    )
+    def toggle_navbar(n_clicks, is_open):
+        if n_clicks:
+            return not is_open
+        return is_open
     
     return dash_app
